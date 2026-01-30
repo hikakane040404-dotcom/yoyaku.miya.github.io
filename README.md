@@ -1,1 +1,0 @@
-# yoyaku.miya.github.io
