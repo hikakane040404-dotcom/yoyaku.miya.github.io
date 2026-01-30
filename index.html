@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宮本研面談予約システム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="background-decor"></div>
+    <header class="app-header">
+        <div class="container">
+            <h1>宮本研面談予約システム</h1>
+            <p class="subtitle">Miyamoto Lab Interview Reservation System</p>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        <section class="calendar-section">
+            <div class="calendar-header">
+                <button id="prevMonth" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+                <h2 id="currentMonthDisplay">2026年 1月</h2>
+                <button id="nextMonth" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+
+            <div class="admin-controls-area">
+                <button id="adminToggleBtn" class="text-btn">管理者モード: OFF</button>
+                <button id="allReservationsBtn" class="text-btn" style="display:none; margin-left: 1rem;">全予約確認</button>
+                <button id="changePasswordBtn" class="text-btn"
+                    style="display:none; margin-left: 1rem;">パスワード変更</button>
+            </div>
+
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Day headers will be injected here -->
+                <!-- Dates will be injected here -->
+            </div>
+
+            <div class="calendar-legend">
+                <div class="legend-item"><span class="dot available"></span>予約可能</div>
+                <div class="legend-item"><span class="dot few"></span>残りわずか</div>
+                <div class="legend-item"><span class="dot full"></span>満席</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Reservation Modal -->
+    <div id="reservationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalDateTitle">予約情報の入力</h3>
+                <button class="close-btn closeModal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="reservationForm">
+                <div class="form-group">
+                    <label for="name">氏名</label>
+                    <input type="text" id="name" name="name" required placeholder="宮本 太郎">
+                </div>
+                <div class="form-group">
+                    <label for="studentId">学籍番号</label>
+                    <input type="text" id="studentId" name="studentId" required placeholder="00X0000">
+                </div>
+                <div class="form-group">
+                    <label for="email">メールアドレス (通知送付先)</label>
+                    <input type="email" id="email" name="email" required placeholder="student@university.ac.jp">
+                </div>
+                <div class="form-group">
+                    <label for="format">希望形式</label>
+                    <select id="format" name="format">
+                        <option value="presential">対面</option>
+                        <option value="remote">リモート (Zoom/Teams)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="timeSlot">希望時間</label>
+                    <select id="timeSlot" name="timeSlot" required>
+                        <!-- Options generated dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="type">面談内容</label>
+                    <select id="type" name="type">
+                        <option value="research">研究相談</option>
+                        <option value="report">進捗報告</option>
+                        <option value="other">その他</option>
+                    </select>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="submit-btn">予約する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Day Management Modal -->
+    <div id="adminDayModal" class="modal">
+        <div class="modal-content admin-modal">
+            <div class="modal-header">
+                <h3 id="adminDateTitle">管理者設定</h3>
+                <button class="close-btn closeModal"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="admin-section">
+                <h4>予約枠の管理</h4>
+                <p class="admin-hint">チェックを外すとその時間帯を「予約不可」にします。</p>
+                <div id="adminTimeSlots" class="admin-slots-grid">
+                    <!-- Checkboxes generated dynamically -->
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <h4>現在の予約一覧</h4>
+                <ul id="adminReservationsList" class="reservation-list">
+                    <!-- List items generated dynamically -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Login Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>管理者認証</h3>
+                <button class="close-btn closeModal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="passwordForm">
+                <div class="form-group">
+                    <label for="adminPassword">パスワードを入力してください</label>
+                    <input type="password" id="adminPassword" required>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="submit-btn">ログイン</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>パスワード変更</h3>
+                <button class="close-btn closeModal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="changePasswordForm">
+                <div class="form-group">
+                    <label for="currentPasswordInput">現在のパスワード</label>
+                    <input type="password" id="currentPasswordInput" required>
+                </div>
+                <div class="form-group">
+                    <label for="newPasswordInput">新しいパスワード</label>
+                    <input type="password" id="newPasswordInput" required>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="submit-btn">変更する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- All Reservations Modal -->
+    <div id="allReservationsModal" class="modal">
+        <div class="modal-content admin-modal">
+            <div class="modal-header">
+                <h3>全予約一覧</h3>
+                <button class="close-btn closeModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="admin-section">
+                <div class="filter-options" style="margin-bottom: 1rem; text-align: right;">
+                    <button id="copyAllDataBtn" class="text-btn" style="font-size: 0.8rem;">データをコピー</button>
+                </div>
+                <ul id="allReservationsList" class="reservation-list" style="max-height: 400px;">
+                    <!-- List items generated dynamically -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification/Toast -->
+    <div id="toast" class="toast">予約が完了しました</div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
