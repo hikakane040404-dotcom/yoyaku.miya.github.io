@@ -58,7 +58,19 @@ class NotificationManager {
             // Register service worker (relative path for GitHub Pages compatibility)
             const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
             console.log('Service Worker registered:', registration);
-
+            // Wait for service worker to be ready
+            await navigator.serviceWorker.ready;
+            console.log('Service Worker is ready');
+            // If the service worker is installing, wait for it to activate
+            if (registration.installing) {
+                await new Promise((resolve) => {
+                    registration.installing.addEventListener('statechange', (e) => {
+                        if (e.target.state === 'activated') {
+                            resolve();
+                        }
+                    });
+                });
+            }
             // Get FCM token
             const token = await getToken(this.messaging, {
                 vapidKey: this.vapidKey,
@@ -204,3 +216,4 @@ class NotificationManager {
 
 // Export for use in main script
 window.NotificationManager = NotificationManager;
+
