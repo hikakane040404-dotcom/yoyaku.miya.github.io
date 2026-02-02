@@ -1,0 +1,138 @@
+/* User Management Grid Layout */
+.user-list-grid {
+    display: grid;
+    /* Name | ID | Email | Count | Action */
+    grid-template-columns: 140px 100px 1fr 80px 60px;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* New Container for Scrolling */
+.user-list-container {
+    max-height: 50vh;
+    /* Viewport relative height */
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #fff;
+    scroll-behavior: smooth;
+}
+
+.user-list-header {
+    background-color: #f1f5f9;
+    /* border-radius: 8px; Removed to fit in container */
+    padding: 1rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #475569;
+    margin-bottom: 0;
+    border-bottom: 1px solid #cbd5e0;
+
+    /* Sticky Header Logic */
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.user-list-item {
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 0.95rem;
+    transition: background-color 0.2s;
+}
+
+.user-list-item:last-child {
+    border-bottom: none;
+}
+
+.user-list-item:hover {
+    background-color: #f8fafc;
+}
+
+.user-email-col {
+    word-break: break-all;
+    font-family: monospace, sans-serif;
+    color: #4a5568;
+    background: #f7fafc;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* Mobile Responsive Layout (Card Style) */
+@media (max-width: 768px) {
+    .user-list-header {
+        display: none;
+        /* Hide table header on mobile */
+    }
+
+    /* Reset container styles for mobile to allow natural flow or full height */
+    .user-list-container {
+        max-height: 60vh;
+        border: none;
+        background: transparent;
+    }
+
+    .user-list-grid.user-list-item {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        padding: 1rem;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        margin-bottom: 0.75rem;
+    }
+
+    /* Adjust order visually if needed, but flex-direction column stacks them naturally */
+
+    /* Name & ID row */
+    .user-list-grid.user-list-item>div:nth-child(1),
+    /* Name */
+    .user-list-grid.user-list-item>div:nth-child(2)
+
+    /* ID */
+        {
+        font-weight: bold;
+        display: inline-block;
+        margin-right: 0.5rem;
+    }
+
+    /* Wrap Name/ID in a visually cohesive way via order or just natural flow */
+
+    /* Email full width */
+    .user-email-col {
+        width: 100%;
+        word-break: break-all;
+        font-size: 0.85rem;
+    }
+
+    /* Stats & Action row */
+    .user-list-grid.user-list-item>div:nth-child(4),
+    /* Count */
+    .user-list-grid.user-list-item>div:nth-child(5)
+
+    /* Action */
+        {
+        align-self: flex-end;
+        /* Push to right or keep left */
+        margin-top: 0.25rem;
+    }
+
+    /* Arrange Bottom Row: Count (Left) -- Action (Right) */
+    .user-list-grid.user-list-item {
+        position: relative;
+    }
+
+    .user-list-grid.user-list-item>div:nth-child(4) {
+        /* Count */
+        display: inline-block;
+    }
+
+    .user-list-grid.user-list-item>div:nth-child(5) {
+        /* Action Button */
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+}
